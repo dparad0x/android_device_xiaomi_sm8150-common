@@ -11,18 +11,16 @@ DEXPREOPT_GENERATE_APEX_IMAGE := true
 
 # Architecture
 TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-a
+TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := generic
-TARGET_CPU_VARIANT_RUNTIME := kryo385
+TARGET_CPU_VARIANT := cortex-a76
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_VARIANT_RUNTIME := kryo385
+TARGET_2ND_CPU_VARIANT := cortex-a76
 
 # Audio
 AUDIO_FEATURE_ENABLED_AHAL_EXT := false
@@ -78,7 +76,7 @@ BOARD_HAVE_QCOM_FM := true
 # HIDL
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     $(COMMON_PATH)/framework_compatibility_matrix.xml \
-    vendor/lineage/config/device_framework_matrix.xml
+    vendor/aosp/config/device_framework_matrix.xml
 DEVICE_MATRIX_FILE += $(COMMON_PATH)/compatibility_matrix.xml
 DEVICE_MANIFEST_FILE += $(COMMON_PATH)/manifest.xml
 ODM_MANIFEST_SKUS += nfc
@@ -91,7 +89,7 @@ TARGET_RECOVERY_DEVICE_MODULES ?= init_xiaomi_msmnile
 # Kernel
 BOARD_BOOT_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 androidboot.usbcontroller=a600000.dwc3
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 androidboot.usbcontroller=a600000.dwc3
 BOARD_KERNEL_CMDLINE += androidboot.init_fatal_reboot_target=recovery
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_KERNEL_PAGESIZE := 4096
@@ -146,29 +144,6 @@ BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := $(ALL_PARTITIONS)
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9126801408 # (BOARD_SUPER_PARTITION_SIZE - 4MB)
-endif # TARGET_USE_DYNAMIC_PARTITIONS
-
-# Partitions - reserved size
-ifeq ($(TARGET_USE_DYNAMIC_PARTITIONS),true)
-SSI_PARTITIONS := system product system_ext
-VENDOR_PARTITIONS := vendor odm
-
-SSI_PARTITIONS := $(call to-upper, $(SSI_PARTITIONS))
-VENDOR_PARTITIONS := $(call to-upper, $(VENDOR_PARTITIONS))
-
-VENDOR_PARTITIONS_RESERVED_SIZE := 30720000
-ifneq ($(WITH_GMS),true)
-SSI_PARTITIONS_RESERVED_SIZE := 1258291200
-else
-SSI_PARTITIONS_RESERVED_SIZE := $(VENDOR_PARTITIONS_RESERVED_SIZE)
-endif
-
-ifneq ($(WITH_GMS),true)
-$(foreach p, $(SSI_PARTITIONS), $(eval BOARD_$(p)IMAGE_EXTFS_INODE_COUNT := -1))
-endif
-
-$(foreach p, $(SSI_PARTITIONS), $(eval BOARD_$(p)IMAGE_PARTITION_RESERVED_SIZE := $(SSI_PARTITIONS_RESERVED_SIZE)))
-$(foreach p, $(VENDOR_PARTITIONS), $(eval BOARD_$(p)IMAGE_PARTITION_RESERVED_SIZE := $(VENDOR_PARTITIONS_RESERVED_SIZE)))
 endif # TARGET_USE_DYNAMIC_PARTITIONS
 
 # Platform
